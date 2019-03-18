@@ -1,5 +1,5 @@
 #deckbuilder -- an argument spoofer tool to be used with the argue command in Cobaltstrike
-#Cobaltstrike version required: 3.12+
+#Cobaltstrike version required: 3.13+
 #author:   Christopher Cottrell (@1c3be4r)
 
 # Hate (my) comments? sed -i 's/^#/d' deckbuilder.cna
