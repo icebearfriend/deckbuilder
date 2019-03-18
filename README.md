@@ -10,7 +10,7 @@
 
 ## Summary and Methodology
 
-This script, deckbuilder.cna, utilizes the **argue** command introduced with Cobalt Strike v 3.13. It will take a list of already defined programs, such as *cmd.exe* or *wmic.exe* and generate fake arguments for those commands. 
+This script, deckbuilder.cna, utilizes the **argue** command introduced with Cobalt Strike v 3.13. It will take a list of already defined programs, such as *cmd.exe* or *wmic.exe* and generate fake arguments for those commands. These arguments will appear when the commands are executed via **&run** in the beacon console.  
 
 If an argument genreated by the initial command, **shuffle**, is insufficient then the operator can **mulligan** that command until they find one suitable for their needs; the **mulligan** command does not need to already be in the pre-compiled list.
 
@@ -30,11 +30,11 @@ Load the script via Cobalt Strike -> Script Manager.
 
 Run the **shuffle** command to generate arguments for common arguments executed via **run**.
 
-![alt text](https://raw.githubusercontent.com/1c3be4r/stash/master/deckbuilderstep2_.png "Step 2")
+![alt text](https://raw.githubusercontent.com/1c3be4r/stash/master/deckbuilderstep2.png "Step 2")
 
 ### 3) Modify and tweak commands via mulligan
 
-Modify any commands that do not fit your needs via the **mulligan** command. Keep running **mulligan** until you find something you need. This also allows you to spoof commands.
+Modify any commands that do not fit your needs via the **mulligan** command. Keep running **mulligan** until you find something you need. This also allows you to spoof commands that are not in the initial list (example: if you need to upload your own binary and execute it via **&run**.
 
 ![alt text](https://raw.githubusercontent.com/1c3be4r/stash/master/deckbuilderstep3.png "Step 3")
 
