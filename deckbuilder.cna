@@ -1,0 +1,330 @@
+#deckbuilder -- an argument spoofer tool to be used with the argue command in Cobaltstrike
+#Cobaltstrike version required: 3.12+
+#author:   Christopher Cottrell (@1c3be4r)
+
+# Hate (my) comments? sed -i 's/^#/d' deckbuilder.cna
+
+
+# Shuffle is the main function of this script. It will iterate through the @commands list and crank out some funky stuff
+alias shuffle {
+
+$bid = $1;
+@collector = @("");
+
+foreach $cmd (@commands) {
+
+#initializing stuff
+  $temp = '';
+  ($cmdsplit, $null) = split('\.', $cmd); #splitting so you get both cmd.exe and just cmd
+  $rand2 = '';
+  $argargs = '';
+  $argoutput = '';
+  $basepath = '';
+  $filename = '';
+  $ext = '';
+  
+  # an int is returned from randomizer()
+  $rand2 = randomizer(); 
+ 
+  
+  $argargs = argpopper(); #generating our spoofed args
+  $argoutput = rand(@arg_output); #picking a random io redirection technique
+  $basepath = rand(@arg_basepath); #picking a random file path
+  $filename = rand(@arg_filename); #generating random filename
+  $ext = rand(@arg_ext); #picking a random extension
+  
+  push(@collector, %(cmd => "$cmdsplit", entry => "$argargs$argoutput$basepath$filename$rand2$ext"));
+  push(@collector, %(cmd => "$cmd", entry => "$argargs$argoutput$basepath$filename$rand2$ext"));
+  
+  };
+
+#looping through @collector and pushing out our stuff
+foreach $line (@collector){
+
+  bargue_add($bid, "$line['cmd']", "$line['entry']");
+
+};
+
+#listing everything afterwards so we can see the finished product
+bargue_list($bid);
+
+};
+
+
+#this alias works just like &shuffle, but will take a single argument to spoof (entered by you: cmd.exe, wmic.exe, uploadedbinary.exe)
+alias mulligan {
+
+$bid = $1;
+redraw($2);
+
+}
+
+sub redraw {
+ 
+
+  $temp = '';
+  ($cmdsplit, $null) = split('\.', $1);
+  $rand2 = '';
+  $argargs = '';
+  $argoutput = '';
+  $basepath = '';
+  $filename = '';
+  $ext = '';
+  
+  $rand2 = randomizer(); # an int returned from randomizer(@numberrand)
+   
+  $argargs = argpopper();
+  $argoutput = rand(@arg_output);
+  $basepath = rand(@arg_basepath);
+  $filename = rand(@arg_filename);
+  $ext = rand(@arg_ext);
+  
+  bargue_add($bid, "$cmdsplit", "$argargs$argoutput$basepath$filename$rand2$ext");
+  bargue_add($bid, "$1", "$argargs$argoutput$basepath$filename$rand2$ext");
+  
+
+
+};
+
+#this function spits out a randomized number (seeded by @numberrand) in an int format
+sub randomizer {
+
+$x = '';
+$xx = '';
+$xxx = '';
+
+
+$x = rand(@numberrand);
+
+nullzero($x, @numberrand); #nullzero takes two args: the original arg and a backup arg incase the value of the first is 0
+
+$xx = int($x);
+
+$xxx = rand($xx);
+
+return $xxx;
+
+};
+
+
+#this function will ensure that numbers randomized aren't 0
+sub nullzero {
+
+
+$redo = "";
+$redo = $1;
+
+$numtwo = '';
+$numtwo = $2; #this will be 7 for argpopper
+
+while ($redo == 0){
+
+  
+  $redo = rand($numtwo); #for argpopper this will always be an int
+
+}
+
+if ( $redo == 0) {
+
+   nullzero($1, $2);
+} else {
+
+    $x = '';
+    $xx = '';
+
+    
+    $x = int($redo);
+    
+    $xx = rand($x);
+
+return $xx;
+
+}
+};
+
+
+#this function is what generates the spoofed arguments
+sub argpopper {
+
+$argnum = "";
+$cleanrand = "";
+
+$argnum = rand(7);
+
+$cleanrand = nullzero($argnum, 7);
+
+
+@cleanarg = @("");
+$alldone = "";
+$argcatcher = @();
+
+
+@cleanarg = @argargs;
+
+while ( $cleanrand > 0 ) {
+
+
+   $temp = rand(@cleanarg); #copy the list to here so we can muck with it
+ 
+ if ($temp ismatch '.+='){ #using a regex matcher to match anything that any number of characters that ENDS with a =
+ 
+      
+      $numtempb = rand(@numberrand);
+      $numtemp = nullzero($numtempb,$numtempb);
+      push (@argcatcher, "$temp$numtemp ");
+
+  
+} else {
+
+      push (@argcatcher, "$temp");
+
+};
+
+
+$cleanrand--;
+};
+
+$alldone = join('', @argcatcher);
+@argcatcher = @('');
+return $alldone;
+
+};
+
+# sometimes you just need to turn it off. Will only turn off what is in @commands, not extra commands added in via &mulligan
+alias argue_off {
+
+$bid = $1;
+
+foreach $cmd (@commands){
+
+  ($cmdsplit, $null) = split('\.', $cmd);
+  bargue_remove($bid, "$cmd");
+  bargue_remove($bid, "$cmdsplit");
+
+
+};
+
+
+
+
+};
+
+
+# LISTS AND DATA GO BELOW THIS LINE
+
+# [--------------------------------]
+
+
+@arg_output = @(
+"",
+"\> ",
+"\>\> ",
+"\| "
+"\< "
+);
+
+
+@argargs = @(
+"-a ",
+"-n ",
+"-r ",
+"-t ",
+"--type=renderer ",
+"\-\-field-trial-handle\=",
+"--service-pipe-token\=",
+"--lang=en-US ",
+"--extension-process ",
+"--extention-process\=",
+"--enable-offline-auto-reload "
+);
+
+#unused currently in this script
+@arg_net = @( 
+
+'8.8.8.8 ',
+'8.8.4.4',
+'google.com',
+'www.google.com',
+'localhost',
+'127.0.0.1'
+);
+
+
+@arg_basepath = @(
+".\\",
+"c:\\windows\\",
+"C:\\Windows\\",
+"C:\\WINDOWS\\",
+"c:\\program files\\",
+"C:\\Program Files\\",
+"C:\\PROGRAM FILES\\",
+"c:\\program files (x86)\\",
+"C:\\Program Files (x86)\\",
+"C:\\PROGRAM FILES (x86)\\",
+"%windir%\\",
+"%WINDIR%\\",
+"%appdata%\\",
+"%APPDATA%\\",
+"%systemroot%\\",
+"%SYSTEMROOT%\\",
+"%temp%\\",
+"%TEMP%\\"
+);
+
+
+@arg_filename = @(
+"",
+"output_",
+"file_",
+"output",
+"_output",
+"file",
+"_file",
+"report_",
+"report",
+"_report",
+"db",
+"db_",
+"_db",
+"scan",
+"scan_",
+"_scan"
+);
+
+
+@arg_ext = @(
+
+".txt",
+".csv",
+".zip",
+".7z",
+".doc",
+".vbe",
+".wsf",
+".msc",
+);
+
+
+@numberrand = @(
+9,
+99,
+999,
+9999,
+99999,
+999999,
+9999999
+);
+
+
+@commands = @(
+"cmd.exe", 
+"reg.exe", 
+"wmic.exe", 
+"ipconfig.exe", 
+"ping.exe",
+"netstat.exe", 
+"nbtstat.exe",
+"nslookup.exe", 
+"tasklist.exe", 
+"dir.exe"
+);
