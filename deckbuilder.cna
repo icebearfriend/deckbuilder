@@ -234,7 +234,7 @@ foreach $cmd (@commands){
 "--service-pipe-token\=",
 "--lang=en-US ",
 "--extension-process ",
-"--extention-process\=",
+"--extension-process\=",
 "--enable-offline-auto-reload "
 );
 
