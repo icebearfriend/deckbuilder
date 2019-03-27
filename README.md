@@ -49,4 +49,4 @@ If you ever need to wipe the argument list, run the **argue_off** command to wip
 
 Deckbuilder uses a series of precompiled lists to generate and randomize arguments. It uses random number seeds to generate types of numers generated. The randomization of the file paths, file names, file extensios, and input/output redirection all come from lists that can be modified. 
 
-The deckbuilder.cna script then takes these randomized argumens and executes them on a beacon via &bargue_add, &bargue_list, or &bargue_remove.
+The deckbuilder.cna script then takes these randomized arguments and executes them on a beacon via &bargue_add, &bargue_list, or &bargue_remove.
